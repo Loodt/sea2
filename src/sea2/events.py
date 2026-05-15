@@ -50,6 +50,11 @@ class EventType(StrEnum):
     TIER1_NEUTRAL = "TIER1_NEUTRAL"
     TIER1_CONTRADICTED = "TIER1_CONTRADICTED"
     TIER1_SKIPPED = "TIER1_SKIPPED"
+    TIER2_AGREE = "TIER2_AGREE"
+    TIER2_DISAGREE = "TIER2_DISAGREE"
+    TIER2_SKIPPED = "TIER2_SKIPPED"
+    TIER3_REFUTED = "TIER3_REFUTED"
+    TIER3_SKIPPED = "TIER3_SKIPPED"
 
 
 # Step type for the `step` field on Event (which conductor stage emitted it).

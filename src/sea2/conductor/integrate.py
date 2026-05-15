@@ -26,6 +26,7 @@ from sea2.store import (
     findings_path,
     read_findings,
 )
+from sea2.verification import tier2 as _tier2
 from sea2.verification.dag import propagate_confidence, validate_dag
 from sea2.verification.tier0 import (
     Tier0Result,
@@ -45,6 +46,7 @@ if TYPE_CHECKING:
 
     from sea2.chunks import Chunk
     from sea2.verification.tier1 import EntailmentBackend
+    from sea2.verification.tier2 import Tier2Backend
 
 
 @dataclass(frozen=True)
@@ -68,6 +70,7 @@ def integrate(  # noqa: PLR0912, PLR0915 — linear pipeline; splitting hurts re
     http_client: httpx.Client | None = None,
     require_chunk: bool = True,
     tier1_backend: EntailmentBackend | None = None,
+    tier2_backend: Tier2Backend | None = None,
 ) -> IntegrateResult:
     """Validate, verify, and persist findings.
 
@@ -208,9 +211,29 @@ def integrate(  # noqa: PLR0912, PLR0915 — linear pipeline; splitting hurts re
                 tier1_signal = True
             elif tier1_res.status is Tier1Status.CONTRADICTED:
                 tier1_signal = False
-            # NEUTRAL / SKIPPED / ERROR → don't contribute to verdict
         if tier1_signal is not None:
             signals.append(tier1_signal)
+
+        # ── Tier 2 cross-family verifier (sampled) ─────────────────────────
+        # Sampling is stable per finding-id (see should_audit) so re-runs
+        # of the comparison protocol select the same audit subset.
+        tier2_signal: bool | None = None
+        if chunk is not None and (_tier2.is_enabled() or tier2_backend is not None):
+            in_sample = _tier2.should_audit(
+                f, frac=_tier2.sample_fraction(), seed=_tier2.rng_seed()
+            )
+            if in_sample:
+                tier2_res = _tier2.check_tier2(
+                    f, chunk.text, backend=tier2_backend,
+                    force=tier2_backend is not None,
+                )
+                events += _emit(project_dir, tier2_res.event)
+                if tier2_res.verdict is _tier2.Tier2Verdict.AGREE:
+                    tier2_signal = True
+                elif tier2_res.verdict is _tier2.Tier2Verdict.DISAGREE:
+                    tier2_signal = False
+        if tier2_signal is not None:
+            signals.append(tier2_signal)
 
         # ── aggregate verifier status ──────────────────────────────────────
         verifier_status = _aggregate_signals(signals)

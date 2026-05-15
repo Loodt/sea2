@@ -34,6 +34,10 @@ from sea2.retrieve.searcher import DEFAULT_K, ChunkCandidate, Searcher
 SubprocessRunner = Callable[[Provider, str], str]
 """Run `prompt` through the named provider and return raw stdout text."""
 
+# Optional recorder injected by the conductor; signature:
+# (step, prompt_chars, output_chars, exit_code) -> None
+SpanRecorderCallable = Callable[[str, int, int, int], None]
+
 PROMPT_TEMPLATE = """\
 Search the web and fetch top hits for the research query below. Return ONLY
 a JSON array — no prose, no markdown fences. Each element is an object:
@@ -67,6 +71,31 @@ class _Hit(BaseModel):
 
 def default_runner(provider: Provider, prompt: str) -> str:
     """Spawn the provider's CLI with `prompt` on stdin; return stdout."""
+    return _run_with_optional_recorder(provider, prompt, recorder=None, step="subprocess")
+
+
+def make_recording_runner(
+    recorder: SpanRecorderCallable, *, step: str
+) -> SubprocessRunner:
+    """Return a SubprocessRunner that emits one span per call via `recorder`.
+
+    The conductor uses this to record `extract` and `retrieve` spans into
+    the project's spans.jsonl. Test callers pass a no-op recorder.
+    """
+
+    def run(provider: Provider, prompt: str) -> str:
+        return _run_with_optional_recorder(provider, prompt, recorder=recorder, step=step)
+
+    return run
+
+
+def _run_with_optional_recorder(
+    provider: Provider,
+    prompt: str,
+    *,
+    recorder: SpanRecorderCallable | None,
+    step: str,
+) -> str:
     if provider == "anthropic-sdk":
         raise NotImplementedError(
             "SubprocessSearcher does not support anthropic-sdk — use the SDK "
@@ -89,6 +118,10 @@ def default_runner(provider: Provider, prompt: str) -> str:
         timeout=300,
         check=False,
     )
+    if recorder is not None:
+        recorder(
+            step, len(prompt), len(completed.stdout or ""), completed.returncode
+        )
     if completed.returncode != 0:
         raise RuntimeError(
             f"{provider} CLI exited {completed.returncode}: "
@@ -178,7 +211,9 @@ def _parse_hits(raw: str) -> list[_Hit]:
 
 __all__ = [
     "PROMPT_TEMPLATE",
+    "SpanRecorderCallable",
     "SubprocessRunner",
     "SubprocessSearcher",
     "default_runner",
+    "make_recording_runner",
 ]

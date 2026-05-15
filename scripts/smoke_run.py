@@ -38,7 +38,9 @@ from sea2.retrieve.searcher import Searcher  # noqa: TC001 — runtime use in CL
 from sea2.retrieve.subprocess_searcher import (
     SubprocessSearcher,
     default_runner,
+    make_recording_runner,
 )
+from sea2.spans import project_recorder
 from sea2.store import (
     atomic_append_jsonl,
     questions_path,
@@ -141,11 +143,17 @@ def main(argv: list[str] | None = None) -> int:
     print(f"started at: {_now_iso()}")
     print()
 
+    # Wire the extract runner through the span recorder so each subprocess
+    # call lands a row in spans.jsonl (drives comparison-protocol M8/M9).
+    extract_runner = make_recording_runner(
+        project_recorder(args.project_dir), step="extract"
+    )
+
     result = run_loop(
         args.project_dir,
         project_name="smoke",
         searchers=searchers,
-        extract_runner=default_runner,
+        extract_runner=extract_runner,
         max_iterations=args.max_iterations,
     )
 

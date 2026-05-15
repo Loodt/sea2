@@ -1,0 +1,61 @@
+{
+  "name": "au-token-domain-keywords",
+  "description": "Per pre-registration §M5. Keyword sets that map a finding's `domain` field to one of the 11 au-token work-package sub-topics. A finding belongs to a sub-topic if any keyword in its set is a substring match (case-insensitive) of the finding's `domain` field. Frozen before SEA2's first comparison dispatch (commit reference in `docs/comparison-protocol.md` §6).",
+  "subtopics": [
+    {
+      "id": "WP1",
+      "label": "Token architecture & legal classification",
+      "keywords": ["token", "casp", "fais-classification", "spv", "jurisdiction", "erc-", "fais-license", "fma-license"]
+    },
+    {
+      "id": "WP2",
+      "label": "Stage-gated valuation algorithm",
+      "keywords": ["valuation", "nav", "discount-rate", "stage-gate", "valmin", "samval", "monte-carlo", "irr"]
+    },
+    {
+      "id": "WP3",
+      "label": "Transparency & disclosure framework",
+      "keywords": ["disclosure", "transparency", "dashboard", "sens", "lockup", "insider"]
+    },
+    {
+      "id": "WP4a",
+      "label": "Financial-sector / tokenisation regulation",
+      "keywords": ["fsca", "fais", "fma", "crypto", "casp", "sarb", "fic", "kyc", "prospectus", "regulation"]
+    },
+    {
+      "id": "WP4b",
+      "label": "Environmental & operational permitting",
+      "keywords": ["nema", "nem-wa", "nemwa", "permit", "ea", "wml", "wul", "ael", "dffe", "dws", "environmental"]
+    },
+    {
+      "id": "WP4c",
+      "label": "Property / ownership acquisition",
+      "keywords": ["conveyancing", "deeds", "ataqua", "common-law", "title", "ownership", "servitude", "bona-vacantia"]
+    },
+    {
+      "id": "WP4d",
+      "label": "Legislative-change risk (2025 Bill)",
+      "keywords": ["bill-2025", "mrd-bill", "mineral-resources-development-bill", "2025-bill", "legislative-risk", "grandfather"]
+    },
+    {
+      "id": "WP5",
+      "label": "Redemption, liquidity, exit",
+      "keywords": ["redemption", "liquidity", "exit", "secondary-market", "p2p", "oracle-payout", "physical-gold"]
+    },
+    {
+      "id": "WP6",
+      "label": "Comparative benchmarking",
+      "keywords": ["benchmark", "comparable", "etf", "krugerrand", "xaut", "paxg", "kau", "sharpe", "sortino"]
+    },
+    {
+      "id": "WP7",
+      "label": "Governance, rights, dispute resolution",
+      "keywords": ["governance", "voting", "arbitration", "dispute", "dao", "drag-along", "tag-along", "minority"]
+    },
+    {
+      "id": "WP8",
+      "label": "Oracle / production verification",
+      "keywords": ["oracle", "chain-of-custody", "assay", "rand-refinery", "chainlink", "uma", "ipfs", "audit-trail"]
+    }
+  ]
+}
