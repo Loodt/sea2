@@ -1,13 +1,13 @@
 {
   "name": "au-token-regulatory",
-  "description": "Bedrock regulatory documents for the au-token research project. Populate by either (a) dropping PDFs into this directory with the filenames below, or (b) filling `source_url` and running `python scripts/download_corpus.py corpora/au-token-regulatory/manifest.json`.",
+  "description": "Bedrock regulatory documents for the au-token research project. Populate by either (a) dropping PDFs into this directory with the filenames below, or (b) running `python scripts/download_corpus.py corpora/au-token-regulatory/manifest.json` to fetch the verified URLs.",
   "documents": [
     {
       "filename": "mprda.pdf",
       "title": "Mineral and Petroleum Resources Development Act",
-      "citation": "Act 28 of 2002 (consolidated)",
+      "citation": "Act 28 of 2002 (original)",
       "category": "primary-legislation",
-      "source_url": null,
+      "source_url": "https://www.gov.za/sites/default/files/gcis_document/201409/a28-020.pdf",
       "notes": "MPRDA — active mining rights. Does not govern pre-2004 dumps (Ataqua)."
     },
     {
@@ -15,63 +15,63 @@
       "title": "National Environmental Management: Waste Act",
       "citation": "Act 59 of 2008",
       "category": "primary-legislation",
-      "source_url": null,
+      "source_url": "https://www.gov.za/sites/default/files/gcis_document/201409/35718gen779.pdf",
       "notes": "NEM:WA — waste classification and management. Operational gateway for retreatment."
     },
     {
       "filename": "nema.pdf",
       "title": "National Environmental Management Act",
-      "citation": "Act 107 of 1998",
+      "citation": "Act 107 of 1998 (FAOLEX consolidated to 17 Mar 2025)",
       "category": "primary-legislation",
-      "source_url": null,
+      "source_url": "https://faolex.fao.org/docs/pdf/saf123691.pdf",
       "notes": "NEMA — duty of care (s28). Financial Provisioning Regs sit under NEMA."
     },
     {
-      "filename": "gn-r632-waste-classification-regs.pdf",
+      "filename": "gn-r634-waste-classification-regs.pdf",
       "title": "Waste Classification and Management Regulations",
-      "citation": "GN R632 of 2013",
+      "citation": "GN R634 of 2013 (GG 36784)",
       "category": "regulation",
-      "source_url": null,
-      "notes": "Operational classification regime under NEM:WA."
+      "source_url": "https://www.gov.za/sites/default/files/gcis_document/201409/36784rg10008gon634.pdf",
+      "notes": "Parent regs for the waste-classification regime under NEM:WA."
     },
     {
-      "filename": "gn-r634-norms-and-standards.pdf",
+      "filename": "gn-r635-norms-landfill-assessment.pdf",
       "title": "National Norms and Standards for the Assessment of Waste for Landfill Disposal",
-      "citation": "GN R634 of 2013",
+      "citation": "GN R635 of 2013 (GG 36784)",
       "category": "regulation",
-      "source_url": null,
+      "source_url": "https://media.lawlibrary.org.za/media/legislation/13183/source_file/2013-r635.pdf",
       "notes": "TCLP / SPLP leachability testing schedule."
     },
     {
-      "filename": "gn-r635-norms-and-standards-waste-classification.pdf",
+      "filename": "gn-r636-norms-landfill-disposal.pdf",
       "title": "National Norms and Standards for Disposal of Waste to Landfill",
-      "citation": "GN R635 of 2013",
+      "citation": "GN R636 of 2013 (GG 36784)",
       "category": "regulation",
-      "source_url": null,
+      "source_url": "https://www.gov.za/sites/default/files/gcis_document/201409/36784rg10008gon636.pdf",
       "notes": "16-metal contaminant list. Gold not listed → simplifies output classification."
     },
     {
       "filename": "fsca-crypto-declaration-2022.pdf",
       "title": "Declaration of Crypto Assets as a Financial Product",
-      "citation": "FSCA, 19 October 2022, Notice 1350 of 2022 (GG 47805)",
+      "citation": "FSCA, 19 October 2022, Notice 1350 of 2022 (GG 47334)",
       "category": "regulation",
-      "source_url": null,
+      "source_url": "https://www.gov.za/sites/default/files/gcis_document/202210/47334gen1350.pdf",
       "notes": "Brings crypto assets under FAIS — CASP licensing implications."
     },
     {
       "filename": "fais-act.pdf",
       "title": "Financial Advisory and Intermediary Services Act",
-      "citation": "Act 37 of 2002 (consolidated)",
+      "citation": "Act 37 of 2002 (original)",
       "category": "primary-legislation",
-      "source_url": null,
+      "source_url": "https://www.gov.za/sites/default/files/gcis_document/201409/a37-020.pdf",
       "notes": "FAIS — financial product licensing under FSCA."
     },
     {
       "filename": "fma.pdf",
       "title": "Financial Markets Act",
-      "citation": "Act 19 of 2012 (consolidated)",
+      "citation": "Act 19 of 2012 (original)",
       "category": "primary-legislation",
-      "source_url": null,
+      "source_url": "https://www.gov.za/sites/default/files/gcis_document/201409/36121a.pdf",
       "notes": "FMA — securities regulation, prospectus requirements."
     },
     {
@@ -79,63 +79,63 @@
       "title": "Mineral and Petroleum Resources Royalty Act",
       "citation": "Act 28 of 2008",
       "category": "primary-legislation",
-      "source_url": null,
+      "source_url": "https://www.treasury.gov.za/legislation/acts/2008/Royalty%20%20Act%20%2028%20of%20%202008.pdf",
       "notes": "MPRRA — royalty on transferred minerals. Open question: does it apply to pre-2004 dump output?"
     },
     {
       "filename": "mineral-resources-development-bill-2025.pdf",
       "title": "Mineral Resources Development Bill 2025 (draft)",
-      "citation": "B-2025, gazetted May 2025",
+      "citation": "GG 52704 of 20 May 2025, Notice 6210",
       "category": "draft-legislation",
-      "source_url": null,
-      "notes": "Largest legal-structural risk. Introduces 'historic residue stockpiles' category."
+      "source_url": "https://www.gov.za/sites/default/files/gcis_document/202505/52704gon6210.pdf",
+      "notes": "Largest legal-structural risk. Reintroduces State control over historic residue stockpiles."
     },
     {
       "filename": "nema-financial-provisioning-regs.pdf",
       "title": "NEMA Financial Provisioning Regulations",
-      "citation": "GN R1147 of 2015 as amended",
+      "citation": "GN R1147 of 20 November 2015 (GG 39425)",
       "category": "regulation",
-      "source_url": null,
-      "notes": "Quantum for closure provisions on retreatment activities."
+      "source_url": "https://cer.org.za/wp-content/uploads/1999/01/Regulations-pertaining-to-the-Financial-Provision-for-Prospecting-Exploration-Mining-or-Production-Operations.pdf",
+      "notes": "Quantum for closure provisions on retreatment activities. (CER mirror — the dffe.gov.za cert chain fails on Windows; CER hosts the same gazette PDF.)"
     },
     {
       "filename": "case-ataqua-2007.pdf",
-      "title": "De Beers Consolidated Mines Ltd v Ataqua Mining (Pty) Ltd",
-      "citation": "[2007] ZAFSHC 74",
+      "title": "De Beers Consolidated Mines Ltd v Ataqua Mining (Pty) Ltd and Others",
+      "citation": "[2007] ZAFSHC 74 (13 December 2007)",
       "category": "case-law",
-      "source_url": null,
-      "notes": "Settled the pre-2004 dump common-law-property position."
+      "source_url": "https://cer.org.za/wp-content/uploads/2014/02/De-Beers-v-Ataqua-Mining.pdf",
+      "notes": "Settled the pre-2004 dump common-law-property position. CER mirror (SAFLII blocks scrapers)."
     },
     {
       "filename": "case-mpilo-2023.pdf",
-      "title": "Mpilo Royal Family v Centurion Mining",
-      "citation": "[2023] ZAMPMBHC 43",
+      "title": "Mpilo and Zen Holdings (Pty) Ltd v Centurion Mining Company (Pty) Ltd",
+      "citation": "(2815/2023) [2023] ZAMPMBHC 43 (26 July 2023)",
       "category": "case-law",
-      "source_url": null,
-      "notes": "Reaffirmed and extended Ataqua reasoning."
+      "source_url": "https://www.saflii.org/za/cases/ZAMPMBHC/2023/43.pdf",
+      "notes": "Recent Mpumalanga HC ruling on tailings ownership; applies the Konstanz test."
     },
     {
-      "filename": "cdh-ataqua-revisited-2024.pdf",
-      "title": "Ataqua Revisited (CDH Mining & Minerals Alert)",
-      "citation": "Cliffe Dekker Hofmeyr, 2024",
+      "filename": "cdh-ataqua-revisited-2024.html",
+      "title": "Revisiting an old gem in the circularity era: Reprocessing of tailings under the Ataqua judgment",
+      "citation": "Cliffe Dekker Hofmeyr, Mining & Minerals Alert, 12 November 2024",
       "category": "secondary-commentary",
-      "source_url": null,
-      "notes": "Practitioner synthesis of Ataqua + downstream cases."
+      "source_url": "https://www.cliffedekkerhofmeyr.com/en/news/publications/2024/Sector/Mining/mining-and-minerals-alert-12-novemberrevisiting-an-old-gem-in-the-circularity-era-reprocessing-of-tailings-under-the-ataqua-judgment-",
+      "notes": "Practitioner synthesis of Ataqua + downstream developments. HTML."
     },
     {
       "filename": "samrec-2016.pdf",
       "title": "South African Code for the Reporting of Exploration Results, Mineral Resources and Mineral Reserves",
-      "citation": "SAMREC 2016 (and SAMREC 2026 amendments if available)",
+      "citation": "SAMREC 2016 (Third Edition)",
       "category": "code",
-      "source_url": null,
+      "source_url": "https://mrmr.cim.org/media/1049/515-samrec_2016.pdf",
       "notes": "Resource/reserve classification used in valuation algorithm (WP2)."
     },
     {
       "filename": "samval-2016.pdf",
       "title": "South African Code for the Reporting of Mineral Asset Valuation",
-      "citation": "SAMVAL 2016",
+      "citation": "SAMVAL 2016 (Third Edition, 20 December 2016)",
       "category": "code",
-      "source_url": null,
+      "source_url": "https://www.valmin.org/docs/2016_1220_SAMVAL_Code.pdf",
       "notes": "Mineral asset valuation conventions (WP2)."
     }
   ]

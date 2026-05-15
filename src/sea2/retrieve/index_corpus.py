@@ -61,7 +61,12 @@ def _ensure_schema(conn: sqlite3.Connection) -> None:
     conn.commit()
 
 
+_EXCLUDE_NAMES = frozenset({"README.md", "manifest.json"})
+
+
 def _file_to_chunks(path: Path, *, fetched_at: str) -> list[Chunk]:
+    if path.name in _EXCLUDE_NAMES:
+        return []
     mime = _MIME_BY_SUFFIX.get(path.suffix.lower())
     if mime is None:
         return []
@@ -176,7 +181,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     files, chunks = index_corpus(args.corpus_dir, args.output)
-    print(f"\nDone. {files} files → {chunks} chunks → {args.output}")
+    print(f"\nDone. {files} files -> {chunks} chunks -> {args.output}")
     return 0
 
 

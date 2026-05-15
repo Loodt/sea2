@@ -24,7 +24,10 @@ from pathlib import Path
 import httpx
 
 DEFAULT_TIMEOUT_S = 60.0
-USER_AGENT = "sea2-corpus-downloader/0.1 (+research)"
+USER_AGENT = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+)
 
 
 def _download(client: httpx.Client, url: str, dest: Path) -> None:
@@ -77,7 +80,7 @@ def main(argv: list[str] | None = None) -> int:
             if dest.exists() and not args.force:
                 skipped.append(f"{filename} (already present)")
                 continue
-            print(f"  ↓ {filename} ← {url}")
+            print(f"  GET {filename} <- {url}")
             try:
                 _download(client, url, dest)
                 downloaded.append(filename)
