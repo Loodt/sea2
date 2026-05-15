@@ -35,6 +35,8 @@ ignore = [
     "ANN",    # annotations optional in tests
     "PLR2004", # magic values in tests
 ]
+# Tier 0 contains an explicit unicode->ASCII substitution table.
+"src/sea2/verification/tier0.py" = ["RUF001", "RUF002"]
 
 [lint.pydocstyle]
 convention = "google"

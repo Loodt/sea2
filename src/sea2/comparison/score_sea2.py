@@ -34,6 +34,41 @@ def _now_iso() -> str:
     return _dt.datetime.now(_dt.UTC).isoformat()
 
 
+_MIN_METRICS_ROWS_FOR_M9 = 2
+
+
+def _fallback_m9_from_metrics(
+    project_dir: Path, scores: ComparisonScores
+) -> float | None:
+    """Median inter-iteration wall-clock from metrics.jsonl timestamps.
+
+    Used when spans.jsonl has no non-zero durations (e.g. when the
+    span recorder was misconfigured). Records a note on `scores`.
+    """
+    import contextlib  # noqa: PLC0415
+
+    metrics_file = project_dir / "metrics.jsonl"
+    if not metrics_file.exists():
+        return None
+    ts_list: list[float] = []
+    for line in metrics_file.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        row = json.loads(line)
+        t = row.get("timestamp")
+        if not t:
+            continue
+        with contextlib.suppress(ValueError):
+            ts_list.append(_dt.datetime.fromisoformat(t).timestamp())
+    if len(ts_list) < _MIN_METRICS_ROWS_FOR_M9:
+        return None
+    deltas_ms = [(ts_list[i] - ts_list[i - 1]) * 1000 for i in range(1, len(ts_list))]
+    scores.notes.append(
+        "M9 fell back to metrics.jsonl inter-row deltas (spans missing durations)"
+    )
+    return statistics.median(deltas_ms)
+
+
 def _load_keywords(keywords_path: Path | None) -> dict[str, list[str]]:
     if keywords_path is None:
         keywords_path = Path(__file__).resolve().parents[3] / "docs" / "comparison-domain-keywords.json"
@@ -160,11 +195,15 @@ def score_sea2(  # noqa: PLR0915 — linear scorer; splitting reduces readabilit
         scores.m8_token_cost_per_verified = total_tokens / scores.findings_verified
 
     # ── M9 Median wall-clock per iteration ───────────────────────────────
+    # Prefer span durations if non-zero (spans-aware production runs).
+    # Otherwise fall back on metrics.jsonl inter-row deltas as a proxy
+    # (each ConductorMetric is appended at end-of-iteration).
     extract_spans = [s for s in spans if s.step in ("extract", "subprocess")]
-    if extract_spans:
-        scores.m9_median_iteration_wallclock_ms = statistics.median(
-            s.duration_ms for s in extract_spans
-        )
+    nonzero_durations = [s.duration_ms for s in extract_spans if s.duration_ms > 0]
+    if nonzero_durations:
+        scores.m9_median_iteration_wallclock_ms = statistics.median(nonzero_durations)
+    else:
+        scores.m9_median_iteration_wallclock_ms = _fallback_m9_from_metrics(project_dir, scores)
 
     # ── M10 Silent-failure event count ───────────────────────────────────
     silent_failure_types = {

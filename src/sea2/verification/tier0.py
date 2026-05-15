@@ -201,9 +201,23 @@ def check_ledger_consistency(
 
 _WS_RE = re.compile(r"\s+")
 
+# Common typographic substitutions: smart-quotes / dashes / ellipsis that pdfminer
+# and pymupdf produce on stylised PDF text but LLMs transcribe as plain ASCII.
+# The unicode characters in the keys are intentional — that's what we're mapping.
+_QUOTE_CHARS = {
+    "“": '"', "”": '"',          # left/right double quote
+    "‘": "'", "’": "'",          # left/right single quote
+    "‚": "'", "‛": "'",
+    "–": "-", "—": "-",          # en/em dash
+    "…": "...",                       # ellipsis
+    " ": " ", " ": " ",          # non-breaking spaces
+    " ": " ", " ": " ",          # en/em space
+}
+_QUOTE_TRANSLATE = str.maketrans(_QUOTE_CHARS)
+
 
 def _normalize_ws(s: str) -> str:
-    return _WS_RE.sub(" ", s).strip()
+    return _WS_RE.sub(" ", s.translate(_QUOTE_TRANSLATE)).strip()
 
 
 def check_quote_supported(finding: Finding, chunk_text: str) -> Tier0Result:

@@ -9,13 +9,14 @@ from sea2.chunks import Chunk
 from sea2.comparison.score_sea2 import score_sea2
 from sea2.events import Event, EventType, emit
 from sea2.models import EpistemicTag, FactType, Finding, ProjectState, Source, VerifierStatus
-from sea2.spans import project_recorder
+from sea2.spans import Span
 from sea2.store import (
     atomic_append_jsonl,
     chunks_path,
     findings_path,
     write_state,
 )
+from sea2.store import atomic_append_jsonl as _aaj
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -105,11 +106,27 @@ def _build_fixture_project(tmp_path: Path) -> None:
     # Silent-failure proxy: one PRODUCE_FAIL.
     emit(tmp_path, Event(event_type=EventType.PRODUCE_FAIL, step="extract", error="x"))
 
-    # Spans: 3 extract calls.
-    record = project_recorder(tmp_path)
-    record("extract", 1200, 400, 0)
-    record("extract", 1100, 350, 0)
-    record("extract", 900, 250, 0)
+    # Spans: 3 extract calls with realistic durations.
+    from sea2.spans import spans_path  # noqa: PLC0415
+
+    for i, (pc, oc, dur) in enumerate(
+        [(1200, 400, 5000), (1100, 350, 4500), (900, 250, 6000)]
+    ):
+        _aaj(
+            spans_path(tmp_path),
+            Span(
+                span_id=f"sp{i:013d}",
+                step="extract",
+                start_ts="2026-05-15T00:00:00Z",
+                end_ts="2026-05-15T00:00:05Z",
+                duration_ms=dur,
+                prompt_chars=pc,
+                output_chars=oc,
+                prompt_tokens_est=pc // 4,
+                output_tokens_est=oc // 4,
+                exit_code=0,
+            ),
+        )
 
 
 def test_score_sea2_smoke(tmp_path: Path) -> None:
