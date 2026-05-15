@@ -95,7 +95,7 @@ def test_end_to_end_phase1_pipeline(tmp_path: Path) -> None:
     client = httpx.Client(
         transport=httpx.MockTransport(lambda req: httpx.Response(200))
     )
-    result = integrate(tmp_path, candidates, http_client=client)
+    result = integrate(tmp_path, candidates, http_client=client, require_chunk=False)
 
     assert len(result.admitted) == 2
     for f in result.admitted:

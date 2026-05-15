@@ -51,7 +51,7 @@ def test_extract_noop_passes_fixtures() -> None:
 
 def test_integrate_admits_clean_finding_and_persists(tmp_path: Path) -> None:
     f = _finding(1, url="url:https://example.com/x")
-    res = integrate(tmp_path, [f], http_client=_client_ok())
+    res = integrate(tmp_path, [f], http_client=_client_ok(), require_chunk=False)
     assert len(res.admitted) == 1
     assert res.admitted[0].verifier_status is VerifierStatus.VERIFIED
     # Persisted to findings.jsonl
@@ -61,7 +61,7 @@ def test_integrate_admits_clean_finding_and_persists(tmp_path: Path) -> None:
 
 
 def test_integrate_emits_store_append_ok_event(tmp_path: Path) -> None:
-    integrate(tmp_path, [_finding(1)], http_client=_client_ok())
+    integrate(tmp_path, [_finding(1)], http_client=_client_ok(), require_chunk=False)
     events = read_events(tmp_path)
     types = [e["event_type"] for e in events]
     assert "STORE_APPEND_OK" in types
@@ -69,7 +69,7 @@ def test_integrate_emits_store_append_ok_event(tmp_path: Path) -> None:
 
 def test_integrate_rejects_schema_invalid_dict(tmp_path: Path) -> None:
     bad = {"id": "f-bad"}  # missing required fields
-    res = integrate(tmp_path, [bad], http_client=_client_ok())
+    res = integrate(tmp_path, [bad], http_client=_client_ok(), require_chunk=False)
     assert len(res.admitted) == 0
     assert len(res.rejected) == 1
     assert "schema" in res.rejected[0][1]
@@ -79,7 +79,7 @@ def test_integrate_rejects_schema_invalid_dict(tmp_path: Path) -> None:
 
 def test_integrate_rejects_dag_orphan(tmp_path: Path) -> None:
     bad = _finding(1, tag=EpistemicTag.DERIVED, derived_from=["does-not-exist"])
-    res = integrate(tmp_path, [bad], http_client=_client_ok())
+    res = integrate(tmp_path, [bad], http_client=_client_ok(), require_chunk=False)
     assert len(res.admitted) == 0
     assert "dag-orphan" in res.rejected[0][1]
 
@@ -90,7 +90,7 @@ def test_integrate_bounds_tag_by_weakest_premise(tmp_path: Path) -> None:
     est = est.model_copy(update={"tag": EpistemicTag.ESTIMATED, "source": None})
     # Producer declares SOURCE; weakest premise is ESTIMATED, so admitted tag
     # must be ESTIMATED.
-    integrate(tmp_path, [src, est], http_client=_client_ok())
+    integrate(tmp_path, [src, est], http_client=_client_ok(), require_chunk=False)
     derived_dict = {
         "id": "f-003",
         "claim": "derived claim",
@@ -102,18 +102,21 @@ def test_integrate_bounds_tag_by_weakest_premise(tmp_path: Path) -> None:
         "iteration": 0,
         "derived_from": ["f-001", "f-002"],
     }
-    res = integrate(tmp_path, [derived_dict], http_client=_client_ok())
+    res = integrate(tmp_path, [derived_dict], http_client=_client_ok(), require_chunk=False)
     assert len(res.admitted) == 1
     assert res.admitted[0].tag is EpistemicTag.ESTIMATED
 
 
-def test_integrate_url_fail_flags_finding(tmp_path: Path) -> None:
+def test_integrate_url_fail_marks_finding_failed(tmp_path: Path) -> None:
+    # Phase 2 semantics: no-op Tier 0 checks (ledger no-conflict, no-DOI,
+    # no-arXiv) do not contribute positive signals to the verdict. With
+    # only a URL check active and that check failing, status is FAILED.
     bad_client = httpx.Client(
         transport=httpx.MockTransport(lambda req: httpx.Response(404))
     )
     f = _finding(1, url="url:https://example.com/missing")
-    res = integrate(tmp_path, [f], http_client=bad_client)
+    res = integrate(tmp_path, [f], http_client=bad_client, require_chunk=False)
     assert len(res.admitted) == 1
-    assert res.admitted[0].verifier_status is VerifierStatus.FLAGGED
+    assert res.admitted[0].verifier_status is VerifierStatus.FAILED
     events = read_events(tmp_path)
     assert any(e["event_type"] == EventType.TIER0_URL_FAIL.value for e in events)

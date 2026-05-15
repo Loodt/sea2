@@ -47,5 +47,5 @@ strict = true
 files = ["src/sea2"]
 
 [[tool.mypy.overrides]]
-module = ["rank_bm25.*", "trafilatura.*", "pymupdf.*"]
+module = ["rank_bm25.*", "trafilatura.*", "pymupdf.*", "transformers.*"]
 ignore_missing_imports = true
