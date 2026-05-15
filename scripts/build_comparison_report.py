@@ -153,9 +153,12 @@ def main(argv: list[str] | None = None) -> int:  # noqa: PLR0915
         sea_str = _fmt(row.sea_value, pct=any(p in row.label for p in pct_metrics))
         sea2_str = _fmt(row.sea2_value, pct=any(p in row.label for p in pct_metrics))
         v = _verdict(row)
-        if "SEA2" in v and "SEA " not in v.replace("SEA2", ""):
+        # "SEA2" or "SEA2 (SEA N/A)" → SEA2 wins
+        # "SEA" or "SEA (SEA2 N/A)" → SEA wins
+        # "TIE …", "—", "N/A" → tie/unscored
+        if v.startswith("SEA2"):
             sea2_wins += 1
-        elif v.startswith("SEA") and not v.startswith("SEA2"):
+        elif v.startswith("SEA"):
             sea_wins += 1
         else:
             ties += 1
