@@ -43,6 +43,11 @@ corpora/*/*.md
 !corpora/*/README.md
 corpora/*/index.sqlite
 
+# Comparison-blind: A/B mapping is sealed locally, must NOT leak into git
+comparison-blind/.mapping
+comparison-blind/expected.md
+comparison-blind/m11-m12.json
+
 # Env
 .env
 .env.*

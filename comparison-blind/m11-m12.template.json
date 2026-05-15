@@ -1,0 +1,13 @@
+{
+  "_instructions": "Fill in your confidence rating (1-10) and flagged-for-followup count for each document. Read in the order printed by blind_compare.py — for this run: B then A. Do NOT look at .mapping until both ratings are recorded below. Then rename this file to m11-m12.json.",
+  "A": {
+    "confidence_1_to_10": null,
+    "flagged_followup_count": null,
+    "notes": ""
+  },
+  "B": {
+    "confidence_1_to_10": null,
+    "flagged_followup_count": null,
+    "notes": ""
+  }
+}
