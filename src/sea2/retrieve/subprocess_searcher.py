@@ -35,8 +35,8 @@ SubprocessRunner = Callable[[Provider, str], str]
 """Run `prompt` through the named provider and return raw stdout text."""
 
 # Optional recorder injected by the conductor; signature:
-# (step, prompt_chars, output_chars, exit_code) -> None
-SpanRecorderCallable = Callable[[str, int, int, int], None]
+# (step, prompt_chars, output_chars, exit_code, duration_ms) -> None
+SpanRecorderCallable = Callable[[str, int, int, int, int], None]
 
 PROMPT_TEMPLATE = """\
 Search the web and fetch top hits for the research query below. Return ONLY
@@ -108,6 +108,7 @@ def _run_with_optional_recorder(
             f"provider {provider!r} CLI not on PATH: looked for {cfg.binary!r}"
         )
     args = [binary, *cfg.base_args]
+    start = _dt.datetime.now(_dt.UTC)
     completed = subprocess.run(  # noqa: S603 — binary resolved via shutil.which
         args,
         input=prompt,
@@ -118,9 +119,14 @@ def _run_with_optional_recorder(
         timeout=300,
         check=False,
     )
+    duration_ms = int((_dt.datetime.now(_dt.UTC) - start).total_seconds() * 1000)
     if recorder is not None:
         recorder(
-            step, len(prompt), len(completed.stdout or ""), completed.returncode
+            step,
+            len(prompt),
+            len(completed.stdout or ""),
+            completed.returncode,
+            duration_ms,
         )
     if completed.returncode != 0:
         raise RuntimeError(

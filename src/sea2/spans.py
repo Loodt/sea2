@@ -124,27 +124,40 @@ def read_spans(project_dir: Path | str) -> list[Span]:
     return spans
 
 
-SpanRecorder = Callable[[str, int, int, int], None]
+SpanRecorder = Callable[[str, int, int, int, int], None]
 """Lightweight recorder used inside `default_runner`. Signature:
-(step, prompt_chars, output_chars, exit_code) -> None.
+(step, prompt_chars, output_chars, exit_code, duration_ms) -> None.
 
-The default runner doesn't have a project_dir; the conductor wires the
-recorder when it owns the call site. Tests inject a no-op recorder.
+`duration_ms` is the actual elapsed time around the subprocess.run call.
 """
 
 
 def project_recorder(project_dir: Path | str) -> SpanRecorder:
     """Return a SpanRecorder that writes to `project_dir/spans.jsonl`."""
 
-    def record(step: str, prompt_chars: int, output_chars: int, exit_code: int) -> None:
-        in_progress = start_span(step, prompt_chars=prompt_chars)
-        # Record duration as 0 since the caller already finished — we backfill
-        # the "duration" via in_progress.start by hand if a richer caller wants
-        # it. Phase 2 callers stamp at-end only.
-        finish_span(
-            project_dir, in_progress,
-            output_chars=output_chars, exit_code=exit_code,
+    def record(
+        step: str,
+        prompt_chars: int,
+        output_chars: int,
+        exit_code: int,
+        duration_ms: int,
+    ) -> None:
+        end = _now()
+        # Reconstruct the start timestamp so spans.jsonl carries both.
+        start = end - _dt.timedelta(milliseconds=duration_ms)
+        span = Span(
+            span_id=uuid.uuid4().hex[:16],
+            step=step,
+            start_ts=start.isoformat(),
+            end_ts=end.isoformat(),
+            duration_ms=duration_ms,
+            prompt_chars=prompt_chars,
+            output_chars=output_chars,
+            prompt_tokens_est=_est_tokens(prompt_chars),
+            output_tokens_est=_est_tokens(output_chars),
+            exit_code=exit_code,
         )
+        atomic_append_jsonl(spans_path(project_dir), span)
 
     return record
 

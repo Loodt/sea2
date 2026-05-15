@@ -31,11 +31,12 @@ def test_span_roundtrip(tmp_path: Path) -> None:
 
 def test_project_recorder_writes_span(tmp_path: Path) -> None:
     record = project_recorder(tmp_path)
-    record("retrieve", 800, 200, 0)
+    record("retrieve", 800, 200, 0, 5000)
     spans = read_spans(tmp_path)
     assert len(spans) == 1
     assert spans[0].step == "retrieve"
     assert spans[0].output_chars == 200
+    assert spans[0].duration_ms == 5000
 
 
 def test_read_spans_empty(tmp_path: Path) -> None:
@@ -45,7 +46,8 @@ def test_read_spans_empty(tmp_path: Path) -> None:
 def test_multiple_spans_append(tmp_path: Path) -> None:
     record = project_recorder(tmp_path)
     for i in range(3):
-        record(f"step-{i}", 100 * (i + 1), 50 * (i + 1), 0)
+        record(f"step-{i}", 100 * (i + 1), 50 * (i + 1), 0, 1000 * (i + 1))
     spans = read_spans(tmp_path)
     assert len(spans) == 3
     assert [s.step for s in spans] == ["step-0", "step-1", "step-2"]
+    assert [s.duration_ms for s in spans] == [1000, 2000, 3000]

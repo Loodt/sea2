@@ -53,11 +53,19 @@ Each finding has this exact shape:
   "source": {{"id": "<the chunk's URL>", "page": null, "section": null, "paragraph_id": null}},
   "verbatim_quote": "<the exact span from the chunk supporting the claim>",
   "confidence": 0.0-1.0,
-  "domain": "<single-word domain tag>",
+  "domain": "<specific kebab-case tag, e.g. fsca-crypto-declaration, mprda-section-43, samval-discount-rate>",
   "iteration": {iteration},
   "admitted_chunk_id": "<one of the chunk IDs below>",
   "derived_from": []
 }}
+
+DOMAIN FIELD — important for downstream coverage analysis. Use a SPECIFIC
+kebab-case tag (one of: fsca-crypto, fais-licensing, fma-securities,
+sarb-excon, sars-tax, fic-aml, mprda, nemwa, nema-fp-regs, ataqua,
+mineral-resources-development-bill-2025, samval, samrec, mprra,
+nema-section-28, valuation-discount-rate, oracle-design, token-standard,
+spv-structure, ...). AVOID generic labels like "law", "regulation",
+"legal" — they break downstream sub-topic coverage scoring.
 
 Question:
 {question}
