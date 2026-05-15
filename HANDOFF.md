@@ -1,6 +1,6 @@
 # SEA2 — Handoff Doc (resume here in a fresh session)
 
-**Status:** Repo scaffolded 2026-05-15. No code written. Phase 1 (audit + foundation) is the next concrete deliverable.
+**Status:** Repo scaffolded 2026-05-15. SEA postmortem audit complete (2026-05-15) — see [`docs/sea-postmortem.md`](docs/sea-postmortem.md). Phase 1 foundation work (per audit's Phase 1 Implications section) is the next concrete deliverable. No code written yet.
 
 ---
 

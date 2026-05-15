@@ -1,0 +1,45 @@
+target-version = "py312"
+line-length = 100
+src = ["src", "tests"]
+
+[lint]
+# Strict by design. Enforces:
+#  - BLE001 / TRY: no broad/bare exceptions (commitment 6: fail loudly)
+#  - S110 / S112: no try/except: pass
+#  - PL: pylint subset for code-smell
+select = [
+    "E",     # pycodestyle errors
+    "W",     # pycodestyle warnings
+    "F",     # pyflakes
+    "I",     # isort
+    "B",     # flake8-bugbear
+    "BLE",   # flake8-blind-except
+    "TRY",   # tryceratops
+    "S",     # flake8-bandit (S110/S112 catch silent excepts)
+    "UP",    # pyupgrade
+    "RUF",   # ruff-specific
+    "SIM",   # flake8-simplify
+    "PL",    # pylint
+    "TCH",   # flake8-type-checking
+    "ANN",   # flake8-annotations (signatures must be typed)
+]
+ignore = [
+    "PLR0913", # too many args — schemas have many fields
+    "TRY003", # long messages in exceptions — useful for fail-loudly events
+    "E501",   # line length handled by formatter
+]
+
+[lint.per-file-ignores]
+"tests/**/*.py" = [
+    "S101",   # assert in tests
+    "ANN",    # annotations optional in tests
+    "PLR2004", # magic values in tests
+]
+
+[lint.pydocstyle]
+convention = "google"
+
+[format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"

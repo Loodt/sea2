@@ -1,22 +1,40 @@
-node_modules/
-dist/
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+.eggs/
 build/
-.env
-.env.*
-!.env.example
+dist/
+.venv/
+venv/
+env/
 
+# Tooling caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.cache/
+
+# Project data
 projects/
 *.log
 *.err.log
 
+# Editor / OS
 .DS_Store
 Thumbs.db
+.vscode/
+.idea/
 
-*.tsbuildinfo
-.cache/
-
-# local sqlite vector stores
+# Local data stores
 *.db
 *.sqlite
 *.sqlite-shm
 *.sqlite-wal
+
+# Env
+.env
+.env.*
+!.env.example
