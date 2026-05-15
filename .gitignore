@@ -34,6 +34,15 @@ Thumbs.db
 *.sqlite-shm
 *.sqlite-wal
 
+# Corpora — the actual document binaries are reproducible from manifest.json
+corpora/*/*.pdf
+corpora/*/*.html
+corpora/*/*.htm
+corpora/*/*.txt
+corpora/*/*.md
+!corpora/*/README.md
+corpora/*/index.sqlite
+
 # Env
 .env
 .env.*

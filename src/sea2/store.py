@@ -18,7 +18,7 @@ from filelock import FileLock
 from pydantic import BaseModel, ValidationError
 
 from sea2.chunks import Chunk
-from sea2.models import Finding, Question
+from sea2.models import Finding, ProjectState, Question
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterable
@@ -47,6 +47,14 @@ def summary_path(project_dir: Path | str) -> Path:
 
 def chunks_path(project_dir: Path | str) -> Path:
     return Path(project_dir) / "chunks.jsonl"
+
+
+def state_path(project_dir: Path | str) -> Path:
+    return Path(project_dir) / "state.json"
+
+
+def metrics_path(project_dir: Path | str) -> Path:
+    return Path(project_dir) / "metrics.jsonl"
 
 
 def _lock_for(path: Path) -> FileLock:
@@ -140,6 +148,24 @@ def find_chunk_by_id(project_dir: Path | str, chunk_id: str) -> Chunk | None:
         if c.chunk_id == chunk_id:
             return c
     return None
+
+
+def read_state(project_dir: Path | str) -> ProjectState | None:
+    """Load ProjectState from state.json. Returns None if absent."""
+    p = state_path(project_dir)
+    if not p.exists():
+        return None
+    return ProjectState.model_validate_json(p.read_text(encoding="utf-8"))
+
+
+def write_state(project_dir: Path | str, state: ProjectState) -> None:
+    """Atomically rewrite state.json with `state`.
+
+    Single-document file (not JSONL) — write to a sibling tempfile then rename.
+    """
+    p = state_path(project_dir)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    _atomic_replace(p, [state.model_dump_json()])
 
 
 def read_events(project_dir: Path | str) -> list[dict[str, object]]:
@@ -246,11 +272,15 @@ __all__ = [
     "chunks_path",
     "find_chunk_by_id",
     "findings_path",
+    "metrics_path",
     "questions_path",
     "read_chunks",
     "read_events",
     "read_findings",
     "read_questions",
+    "read_state",
     "regenerate_summary",
+    "state_path",
     "summary_path",
+    "write_state",
 ]
