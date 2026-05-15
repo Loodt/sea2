@@ -17,6 +17,7 @@ from typing import TYPE_CHECKING
 from filelock import FileLock
 from pydantic import BaseModel, ValidationError
 
+from sea2.chunks import Chunk
 from sea2.models import Finding, Question
 
 if TYPE_CHECKING:
@@ -42,6 +43,10 @@ def questions_path(project_dir: Path | str) -> Path:
 
 def summary_path(project_dir: Path | str) -> Path:
     return Path(project_dir) / "summary.md"
+
+
+def chunks_path(project_dir: Path | str) -> Path:
+    return Path(project_dir) / "chunks.jsonl"
 
 
 def _lock_for(path: Path) -> FileLock:
@@ -121,6 +126,20 @@ def read_findings(project_dir: Path | str) -> list[Finding]:
 
 def read_questions(project_dir: Path | str) -> list[Question]:
     return _read_typed(questions_path(project_dir), Question)
+
+
+def read_chunks(project_dir: Path | str) -> list[Chunk]:
+    return _read_typed(chunks_path(project_dir), Chunk)
+
+
+def find_chunk_by_id(project_dir: Path | str, chunk_id: str) -> Chunk | None:
+    """Linear scan. Fine at Phase 2 scale (≤ low-thousands of chunks per
+    project). Phase 3 swaps this for a sqlite index if it becomes a bottleneck.
+    """
+    for c in read_chunks(project_dir):
+        if c.chunk_id == chunk_id:
+            return c
+    return None
 
 
 def read_events(project_dir: Path | str) -> list[dict[str, object]]:
@@ -224,8 +243,11 @@ __all__ = [
     "SUMMARY_MAX_BYTES",
     "atomic_append_jsonl",
     "atomic_update_jsonl",
+    "chunks_path",
+    "find_chunk_by_id",
     "findings_path",
     "questions_path",
+    "read_chunks",
     "read_events",
     "read_findings",
     "read_questions",
